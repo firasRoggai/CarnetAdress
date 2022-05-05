@@ -166,8 +166,9 @@ int main()
     break;
     }
     printf("\nPress 1 to go back to the main menu\n");
-    scanf("%d",&choix);
-    while(choix != 1){printf("\nPress 1 to go back to the main menu\n");scanf("%d",&choix);}
+    char exit[10];
+    scanf("%s",&exit);
+    while(strcmp(exit,"1") != 0){printf("\nPress 1 to go back to the main menu\n");scanf("%s",&exit);}
     }
     return 0;
 }

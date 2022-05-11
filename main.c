@@ -13,12 +13,12 @@ struct person{
 void ajouter(){
     data = fopen("CarnetAdress.txt","a");
     if(data == NULL){printf("File doesn't exist");return 0;};
-    printf("svp entrer le nom: "); gets(currentPerson.nom);
+    printf("svp entrer le nom: ");    gets(currentPerson.nom);
     printf("svp entrer le prenom: "); gets(currentPerson.prenom);
     printf("svp entrer le adress: "); gets(currentPerson.adress);
-    printf("svp entrer le tel: "); gets(currentPerson.tel);
+    printf("svp entrer le tel: ");    gets(currentPerson.tel);
     printf("svp entrer le mobile: "); gets(currentPerson.mobile);
-    printf("svp entrer le email: "); gets(currentPerson.email);
+    printf("svp entrer le email: ");  gets(currentPerson.email);
     fprintf(data,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
     fclose(data);
     printf("================================\n");
@@ -26,17 +26,20 @@ void ajouter(){
 void aficher(){
     data = fopen("CarnetAdress.txt","r");
     if(data == NULL){printf("File doesn't exist");return 0;};
-    printf("Nom     Prenom   Adress Tel  Mobile  email\n\n");
+    int emptyCheck = 0; //if the variable == 0 then the file has no names in it.
     while(!feof(data)){
     fscanf(data,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
-    printf("%s   %s   %s   %s   %s    %s\n\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
+    if(strcmp(currentPerson.nom,"") != 0){emptyCheck++;}//if the file is NOT empty , emptycheck++;
+    printf("\nNom:          %s   \nPrenom:       %s   \nAdress:       %s   \nTel:          %s   \nNumber:       %s    \nEmail:        %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
+    printf("=====================================");
     }
+    if(emptyCheck == 0){printf("\nThe file is empty");}
     fclose(data);
 }
 void search(){
-    int found = 0; //if the name was found this will turn to 1
     data = fopen("carnetAdress.txt","r");
     if(data == NULL){printf("File doesn't exist");}
+    int found = 0; //if the name was found this will turn to 1
     printf("Enter the name you want to find : ");
     char userSearch[100];
     gets(userSearch);
@@ -44,17 +47,19 @@ void search(){
     fscanf(data,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
     if(strcmp(userSearch,currentPerson.nom) == 0){
     found++;
-    printf("%s   %s   %s   %s   %s    %s\n\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
+    printf("\n%s   %s   %s   %s   %s    %s\n\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
     }
     }
-    if(found == 0){printf("Name not found.");}
+    if(found == 0){printf("\nName not found.");}
     fclose(data);
 }
 void edit(){
     data = fopen("CarnetAdress.txt","r");
-    data2 = fopen("carnet2.alt","w");
-    char  userSearch[100];
-    printf("Entrer le nom aue vous rechercher:");
+    data2 = fopen("altcarnet.txt","w");
+    if(data == NULL){printf("File doesn't exist");}
+    int found = 0; // if there is a matching name this will turn to 1;
+    char  userSearch[100]; // the name that the user wants to delete.
+    printf("Entrez le nom de person que vous souhaitez modifier: ");
     scanf("%s",&userSearch);
     while(!feof(data)){
     fscanf(data,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
@@ -66,6 +71,7 @@ void edit(){
     printf("Entrer le nauveau mobile:"); scanf("%s",currentPerson.mobile);
     printf("Entrer le nauveau email:");  scanf("%s",currentPerson.email);
     fprintf(data2,"%s   %s   %s   %s   %s    %s\n\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
+    found++;
     }
     else{
     fprintf(data2,"%s   %s   %s   %s   %s    %s\n\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
@@ -74,61 +80,51 @@ void edit(){
     }
     fclose(data2);
     fclose(data);
-    // the new data is in a permanent file
-    data = fopen("carnetAdress.txt","w");
-    data2 = fopen("carnet2.alt","r");
-    while(!feof(data2)){
-        fscanf(data2,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
-        fprintf(data,"%s   %s   %s   %s   %s    %s\n\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
-    }
-    fclose(data);
-    fclose(data2);
-    data2 = fopen("carnet2.alt","w");
-    fprintf(data2," ");
-    fclose(data2);
+    if(found == 0){printf("\nName you searched for doesn't exist.");}
+    remove("CarnetAdress.txt");
+    rename("altcarnet.txt","CarnetAdress.txt");
 }
-void supr(){
-    int check = 0;
+void suprimer(){
     data = fopen("CarnetAdress.txt","r");
-    data2 = fopen("carnet2.txt","w");
+    data2 = fopen("altcarnet.txt","w");
+    if(data == NULL){printf("File doesn't exist");}
+    int check = 0;//if a matching name were found , this will turn to 1.
     char  userSearch[100];
-    printf("Entrer le nom aue vous suprrumer:");
+    printf("Entrez le nom que vous souhaitez supprimer:");
     scanf("%s",&userSearch);
     do{
         fscanf(data,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
 
-        if(strcmp(currentPerson.nom,userSearch) != 0){
-        fprintf(data2,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
+        if(strcmp(currentPerson.nom,userSearch) == 0){
+            check++;
         }
+        else{
+        fprintf(data2,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
+
+}
 }
 while(!feof(data));
-    fclose(data);
-    fclose(data2);
-
-    data = fopen("carnetAdress.txt","w");
-    data2 = fopen("carnet2.txt","r");
-    do{
-        fscanf(data2,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
-        fprintf(data,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
-    }
-    while(!feof(data2));
-    fclose(data2);
-    fclose(data);
-}
-void test(){
-data2 = fopen("carnet2.txt","r");
-if(data2 == NULL){printf("NULL");};
-        fscanf(data2,"%s  %s  %s  %s  %s  %s\n",currentPerson.nom,currentPerson.prenom,currentPerson.adress,currentPerson.tel,currentPerson.mobile,currentPerson.email);
-        printf("hi%slo",currentPerson.nom);
+if(check > 0){printf("\nDeletion completed!");}
+else{printf("\nThe person you wanted to delete does not exist .");}
 fclose(data2);
+fclose(data);
+if(check == 1){
+ data2 = fopen("altcarnet.txt","w");
+ fprintf(data2," ");
+ fclose(data2);
 }
+remove("CarnetAdress.txt");
+rename("altcarnet.txt","CarnetAdress.txt");
+}
+
 int main()
 {
-    while (1){
+     while (1){
     char no[1];
     system("cls");
     int choix;
-    printf("Welcom to your Notebook , please enter one of the numbers to choose an action:\n\n");
+    printf("Bienvenu dans votre carnet adress.\n");
+    printf("\n");
     printf("[1] Ajoute     : ajoute une person dans le carnet\n\n");
     printf("[2] rechercher : rechercher une person dans le carnet\n\n");
     printf("[3] modifier   : modifier une person dans le carnet\n\n");
@@ -158,7 +154,7 @@ int main()
 
     case 5:
     scanf("%c",&no);
-    supr();
+    suprimer();
     printf("\n");
     break;
     default:
@@ -172,3 +168,4 @@ int main()
     }
     return 0;
 }
+

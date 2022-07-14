@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-FILE *data;
-FILE *data2;
+FILE *d​ata;
+FILE *d​ata2;
 struct person{
     char nom[100];
     char prenom[100];
